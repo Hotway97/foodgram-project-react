@@ -8,12 +8,11 @@ BASE_DIR = os.path.dirname(
 
 SECRET_KEY = (
     'SECRET_KEY',
-    'my_mega_secret_code_ilz@4zqj=rq&agdol^##zgl9(vs')
+    'p&l%385148kslhtyn^##a1)ilz@4zqj=rq&agdol^##zgl9(vs')
 
 DEBUG = os.getenv('DEBUG', default='True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get(
-    'ALLOWED_HOSTS', default='localhost').split(', ')
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '62.84.124.5']
 
 AUTH_USER_MODEL = 'users.User'
 

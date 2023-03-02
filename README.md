@@ -1,5 +1,5 @@
 ![foodgram-project-react Workflow Status](https://github.com/Hotway97/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg?branch=master&event=push)
-# Продуктовый помощник Foodgram - дипломный проект студента 21 когорты Яндекс.Практикум 2021-2022 гг. Клепикова Д.
+# Продуктовый помощник Foodgram - дипломный проект студента 44 когорты Яндекс.Практикум 2022-2023 гг. Алексеева Илья.
 
 После запуска проекта, он будет доступен по адресу http://127.0.0.1
 Как запустить и посмотреть в действии описано ниже.
