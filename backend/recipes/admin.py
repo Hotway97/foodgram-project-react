@@ -1,108 +1,88 @@
 from django.contrib import admin
+from django.db.models import Count
 
-from .models import (FavoriteRecipe, Ingredient, Recipe, RecipeIngredient,
-                     ShoppingCart, Subscribe, Tag)
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
 
-EMPTY_MSG = '-пусто-'
+from recipes.models import (FavoriteRecipes,
+                            IngredientInRecipe,
+                            Ingredients,
+                            Recipes,
+                            Tags)
 
 
-class RecipeIngredientAdmin(admin.StackedInline):
-    model = RecipeIngredient
-    autocomplete_fields = ('ingredient',)
+class IngredientsResource(resources.ModelResource):
+    """Класс для иморта ингридиентов"""
+    class Meta:
+        model = Ingredients
+        fields = ('id', 'name', 'measurement_unit',)
 
 
-@admin.register(Recipe)
-class RecipeAdmin(admin.ModelAdmin):
+@admin.register(Ingredients)
+class IngredientsAdmin(ImportExportModelAdmin):
+    """Класс, формирующий админ-панель сайта, раздел: Ингридиенты."""
     list_display = (
-        'id', 'get_author', 'name', 'text',
-        'cooking_time', 'get_tags', 'get_ingredients',
-        'pub_date', 'get_favorite_count')
-    search_fields = (
-        'name', 'cooking_time',
-        'author__email', 'ingredients__name')
-    list_filter = ('pub_date', 'tags',)
-    inlines = (RecipeIngredientAdmin,)
-    empty_value_display = EMPTY_MSG
-
-    @admin.display(
-        description='Электронная почта автора')
-    def get_author(self, obj):
-        return obj.author.email
-
-    @admin.display(description='Тэги')
-    def get_tags(self, obj):
-        list_ = [_.name for _ in obj.tags.all()]
-        return ', '.join(list_)
-
-    @admin.display(description=' Ингредиенты ')
-    def get_ingredients(self, obj):
-        return '\n '.join([
-            f'{item["ingredient__name"]} - {item["amount"]}'
-            f' {item["ingredient__measurement_unit"]}.'
-            for item in obj.recipe.values(
-                'ingredient__name',
-                'amount', 'ingredient__measurement_unit')])
-
-    @admin.display(description='В избранном')
-    def get_favorite_count(self, obj):
-        return obj.favorite_recipe.count()
+        'name', 'measurement_unit',
+    )
+    resource_classes = [IngredientsResource]
+    search_fields = ('name',)
+    list_filter = ('name',)
+    empty_value_display = '--пустое поле--'
 
 
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
+@admin.register(Tags)
+class TagsAdmin(admin.ModelAdmin):
+    """Класс, формирующий админ-панель сайта, раздел: Теги."""
+
     list_display = (
-        'id', 'name', 'color', 'slug',)
-    search_fields = ('name', 'slug',)
-    empty_value_display = EMPTY_MSG
+        'name', 'color', 'slug',
+    )
+    search_fields = ('name',)
+    list_filter = ('name',)
+
+    empty_value_display = '--пустое поле--'
 
 
-@admin.register(Ingredient)
-class IngredientAdmin(admin.ModelAdmin):
+class IngredientInRecipeInline(admin.TabularInline):
+    model = IngredientInRecipe
+    extra = 0
+    verbose_name = 'Ингридиент в рецепт'
+    verbose_name_plural = 'Ингридиенты в рецепте'
+    min_num = 1
+    can_delete = False
+
+
+@admin.register(Recipes)
+class RecipesAdmin(admin.ModelAdmin):
+    """Класс, формирующий админ-панель сайта, раздел: Рецепты."""
     list_display = (
-        'id', 'name', 'measurement_unit',)
-    search_fields = (
-        'name', 'measurement_unit',)
-    empty_value_display = EMPTY_MSG
+        'author',
+        'name',
+        'text',
+        'cooking_time',
+        'is_favorite'
+    )
+    inlines = (IngredientInRecipeInline,)
+    filter_horizontal = ('tags',)
+    list_filter = [
+        'name',
+        'author__username',
+        'tags__name',
+    ]
+
+    def is_favorite(self, obj):
+        result = (
+            FavoriteRecipes.objects.
+            filter(recipe=obj).
+            aggregate(is_favorite=Count('recipe')))
+        return result["is_favorite"]
 
 
-@admin.register(Subscribe)
-class SubscribeAdmin(admin.ModelAdmin):
+@admin.register(IngredientInRecipe)
+class IngredientInRecipeAdmin(admin.ModelAdmin):
+    """Класс, формирующий админ-панель сайта, раздел: Ингридиенты в рецепте."""
     list_display = (
-        'id', 'user', 'author', 'created',)
-    search_fields = (
-        'user__email', 'author__email',)
-    empty_value_display = EMPTY_MSG
-
-
-@admin.register(FavoriteRecipe)
-class FavoriteRecipeAdmin(admin.ModelAdmin):
-    list_display = (
-        'id', 'user', 'get_recipe', 'get_count')
-    empty_value_display = EMPTY_MSG
-
-    @admin.display(
-        description='Рецепты')
-    def get_recipe(self, obj):
-        return [
-            f'{item["name"]} ' for item in obj.recipe.values('name')[:5]]
-
-    @admin.display(
-        description='В избранных')
-    def get_count(self, obj):
-        return obj.recipe.count()
-
-
-@admin.register(ShoppingCart)
-class SoppingCartAdmin(admin.ModelAdmin):
-    list_display = (
-        'id', 'user', 'get_recipe', 'get_count')
-    empty_value_display = EMPTY_MSG
-
-    @admin.display(description='Рецепты')
-    def get_recipe(self, obj):
-        return [
-            f'{item["name"]} ' for item in obj.recipe.values('name')[:5]]
-
-    @admin.display(description='В избранных')
-    def get_count(self, obj):
-        return obj.recipe.count()
+        'ingredient',
+        'recipe',
+        'amount'
+    )

@@ -1,14 +1,24 @@
 from django.contrib import admin
-from django.contrib.auth import get_user_model
 
-User = get_user_model()
+from .models import Subscriptions, User
 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
+    """Класс, формирующий админ-панель сайта, раздел: пользователи."""
     list_display = (
-        'id', 'username', 'email',
-        'first_name', 'last_name', 'date_joined',)
-    search_fields = ('email', 'username', 'first_name', 'last_name')
-    list_filter = ('date_joined', 'email', 'first_name')
-    empty_value_display = '-пусто-'
+        'username', 'email', 'first_name',
+        'last_name', 'permissions',
+    )
+    search_fields = ('username', 'permissions',)
+    list_filter = ('username', 'email')
+    empty_value_display = '--пустое поле--'
+
+
+@admin.register(Subscriptions)
+class SubscriptionsAdmin(admin.ModelAdmin):
+    """Класс, формирующий админ-панель сайта, раздел: Подписки."""
+    list_display = (
+        'author', 'user',
+    )
+    empty_value_display = '--пустое поле--'

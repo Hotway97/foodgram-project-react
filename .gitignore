@@ -133,3 +133,5 @@ dmypy.json
 media/
 static/
 .vscode/
+!/backend/tests/
+!/backend/pytest.ini
