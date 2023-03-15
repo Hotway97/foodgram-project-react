@@ -5,14 +5,20 @@ from api.serializers import (IngredientsSerializer, RecipeMinifiedSerializer,
                              RecipesSerializer, SetPasswordSerializer,
                              SignUpSerializer, SubscriptionsSerializer,
                              TagsSerializer)
+
 from django.db.models import Count
 from django.http import HttpResponse
+
 from django_filters.rest_framework import DjangoFilterBackend
+
 from foodgram.settings import STATIC_ROOT
+
 from recipes.models import (FavoriteRecipes, IngredientInRecipe, Ingredients,
                             Recipes, ShoppingCart, Tags)
+
 from reportlab.pdfbase import pdfmetrics, ttfonts
 from reportlab.pdfgen import canvas
+
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -20,6 +26,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+
 from users.models import User
 
 
@@ -197,17 +204,16 @@ class BaseUserViewSet(mixins.CreateModelMixin,
                 serializer.data,
                 status=status.HTTP_201_CREATED
             )
-        if request.method == 'DELETE':
-            author = get_object_or_404(User, id=autor_id)
-            user = self.request.user
-            is_subscribed = user.subscribe_user.filter(author=author)
-            if is_subscribed.exists():
-                is_subscribed.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            return Response(
-                {'errors': 'Вы не подписанны на этого автора'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        author = get_object_or_404(User, id=autor_id)
+        user = self.request.user
+        is_subscribed = user.subscribe_user.filter(author=author)
+        if is_subscribed.exists():
+            is_subscribed.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {'errors': 'Вы не подписанны на этого автора'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):

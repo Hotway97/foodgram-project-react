@@ -1,8 +1,10 @@
 from colorfield.fields import ColorField
+
 from django.core.validators import (MaxLengthValidator, MaxValueValidator,
                                     MinValueValidator)
 from django.db import models
 from django.db.models import UniqueConstraint
+
 from users.models import User
 
 
