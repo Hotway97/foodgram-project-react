@@ -1,8 +1,5 @@
 from api import views
-from api.views import SubscribeAPI
-
 from django.urls import include, path, re_path
-
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -29,5 +26,4 @@ router.register(
 urlpatterns = [
     path('', include(router.urls)),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
-    path('users/<int:id>/subscribe/', SubscribeAPI.as_view())
 ]

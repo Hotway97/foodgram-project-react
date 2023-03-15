@@ -1,14 +1,9 @@
 from django.contrib import admin
 from django.db.models import Count
-
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
-
-from recipes.models import (FavoriteRecipes,
-                            IngredientInRecipe,
-                            Ingredients,
-                            Recipes,
-                            Tags)
+from recipes.models import (FavoriteRecipes, IngredientInRecipe, Ingredients,
+                            Recipes, Tags)
 
 
 class IngredientsResource(resources.ModelResource):
