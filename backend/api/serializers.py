@@ -268,7 +268,6 @@ class RecipeMinifiedSerializer(serializers.ModelSerializer):
     )
     image = Base64ImageField()
 
-
     class Meta:
         model = Recipes
         read_only_fields = (
