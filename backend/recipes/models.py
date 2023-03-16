@@ -65,7 +65,8 @@ class Tags(models.Model):
         verbose_name='Название тега'
     )
     color = ColorField(
-        verbose_name='Цвет в HEX'
+        verbose_name='Цвет в HEX',
+        unique=True
     )
     slug = models.SlugField(
         max_length=200,

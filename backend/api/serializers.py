@@ -185,7 +185,6 @@ class IngredientsInRecipeSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredients.objects.all(),
         error_messages={'does_not_exist': 'Ингридиента нет в базе'})
-    amount = serializers.IntegerField()
 
     class Meta:
         model = IngredientInRecipe
@@ -238,6 +237,7 @@ class Base64ImageField(serializers.ImageField):
     """
     Сериализатор поля с картинкой [image]
     """
+
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):
             format, imgstr = data.split(';base64,')
@@ -267,7 +267,7 @@ class RecipeMinifiedSerializer(serializers.ModelSerializer):
         max_length=200
     )
     image = Base64ImageField()
-    cooking_time = serializers.IntegerField()
+
 
     class Meta:
         model = Recipes
